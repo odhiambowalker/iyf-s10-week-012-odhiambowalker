@@ -76,7 +76,7 @@ A full-stack community platform built with React, Express, and MongoDB.
 - `GET /api/posts/:postId/comments` - Get comments for a post
 - `POST /api/posts/:postId/comments` - Add comment (auth required)
 
-## Authors
+## Authors_ IYF Weekend Academy Season 10
 - Grace
 - Maureen
 - Morgan
