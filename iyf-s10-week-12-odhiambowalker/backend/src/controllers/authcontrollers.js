@@ -10,17 +10,10 @@ export const register = async (req, res) => {
     if (exists) return res.status(400).json({ message: "Email already used" });
 
     const hashed = await bcrypt.hash(password, 10);
+    const user = await User.create({ username, email, password: hashed });
 
-    const user = await User.create({
-      username,
-      email,
-      password: hashed
-    });
-
-    res.json({
-      user,
-      token: generateToken(user._id)
-    });
+    const { password: _, ...safeUser } = user.toObject();
+    res.json({ user: safeUser, token: generateToken(user._id) });
   } catch (e) {
     res.status(500).json({ message: e.message });
   }
@@ -31,16 +24,18 @@ export const login = async (req, res) => {
     const { email, password } = req.body;
 
     const user = await User.findOne({ email });
-    if (!user) return res.status(400).json({ message: "Not found" });
+    if (!user) return res.status(400).json({ message: "User not found" });
 
     const match = await bcrypt.compare(password, user.password);
     if (!match) return res.status(400).json({ message: "Wrong password" });
 
-    res.json({
-      user,
-      token: generateToken(user._id)
-    });
+    const { password: _, ...safeUser } = user.toObject();
+    res.json({ user: safeUser, token: generateToken(user._id) });
   } catch (e) {
     res.status(500).json({ message: e.message });
   }
+};
+
+export const getMe = async (req, res) => {
+  res.json(req.user);
 };
